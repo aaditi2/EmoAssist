@@ -2,6 +2,8 @@ import SwiftUI
 
 struct AgentCardView: View {
     let agent: Agent
+    var width: CGFloat = 260
+    var height: CGFloat = 300
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -36,6 +38,7 @@ struct AgentCardView: View {
             }
         }
         .padding()
+        .frame(width: width, height: height, alignment: .topLeading)
         .background(.ultraThinMaterial)
         .cornerRadius(20)
     }

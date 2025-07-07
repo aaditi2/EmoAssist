@@ -14,11 +14,12 @@ struct AgentDetailView: View {
                     .foregroundColor(.white.opacity(0.7))
 
                 // Stats
-                HStack {
+                HStack(spacing: 16) {
                     StatBox(title: String(format: "%.1f", agent.rating), subtitle: "Rating")
                     StatBox(title: "\(agent.callCount)k", subtitle: "Calls")
                     StatBox(title: "24/7", subtitle: "Available")
                 }
+                .frame(maxWidth: .infinity)
 
                 // About
                 VStack(alignment: .leading, spacing: 8) {

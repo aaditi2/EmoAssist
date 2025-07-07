@@ -14,6 +14,7 @@ struct StatBox: View {
                 .foregroundColor(.white.opacity(0.6))
         }
         .padding()
+        .frame(maxWidth: .infinity)
         .background(.ultraThinMaterial)
         .cornerRadius(20)
     }
