@@ -1,11 +1,4 @@
-//
-//  StatCard.swift
-//  EmoAssist
-//
-//  Created by Aditi More on 7/6/25.
-//
 import SwiftUI
-
 
 struct StatCard: View {
     let title: String
@@ -22,8 +15,7 @@ struct StatCard: View {
                 .font(.caption)
                 .foregroundColor(.white.opacity(0.6))
         }
-        .frame(maxWidth: .infinity)
-        .padding()
+        .frame(width: 115, height: 80)
         .background(.ultraThinMaterial)
         .cornerRadius(20)
     }

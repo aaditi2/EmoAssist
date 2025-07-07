@@ -22,10 +22,10 @@ struct HomeView: View {
                 .padding(.horizontal)
 
                 // MARK: - Stats
-                HStack(spacing: 16) {
-                    StatBox(title: "24/7", subtitle: "Available")
-                    StatBox(title: "50+", subtitle: "AI Agents")
-                    StatBox(title: "1M+", subtitle: "Conversations")
+                HStack(spacing: 11) {
+                    StatCard(title: "24/7", subtitle: "Available")
+                    StatCard(title: "50+", subtitle: "AI Agents")
+                    StatCard(title: "1M+", subtitle: "Conversations")
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal)

@@ -15,9 +15,9 @@ struct AgentDetailView: View {
 
                 // Stats
                 HStack(spacing: 16) {
-                    StatBox(title: String(format: "%.1f", agent.rating), subtitle: "Rating")
-                    StatBox(title: "\(agent.callCount)k", subtitle: "Calls")
-                    StatBox(title: "24/7", subtitle: "Available")
+                    StatCard(title: String(format: "%.1f", agent.rating), subtitle: "Rating")
+                    StatCard(title: "\(agent.callCount)k", subtitle: "Calls")
+                    StatCard(title: "24/7", subtitle: "Available")
                 }
                 .frame(maxWidth: .infinity)
 
