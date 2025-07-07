@@ -14,7 +14,6 @@ struct Agent: Identifiable, Codable {
     var description: String
     var avatarURL: String
     var backgroundGradient: String
-    var isFeatured: Bool
     var callCount: Int
     var rating: Double
 }

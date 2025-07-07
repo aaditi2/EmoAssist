@@ -31,11 +31,6 @@ struct AgentCardView: View {
             }
             .font(.caption2)
 
-            if agent.isFeatured {
-                Text("⭐ Featured")
-                    .font(.caption2)
-                    .foregroundColor(.orange)
-            }
         }
         .padding()
         .frame(width: width, height: height, alignment: .topLeading)

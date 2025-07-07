@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var featuredAgents: [Agent] = []
     @State private var allAgents: [Agent] = []
 
     var body: some View {
@@ -30,22 +29,10 @@ struct HomeView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal)
 
-                // MARK: - Featured Agent
-                if let featured = featuredAgents.first {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("🌟 Featured")
-                            .font(.headline)
-                            .foregroundColor(.white)
-
-                        AgentCardView(agent: featured)
-                    }
-                    .padding(.horizontal)
-                }
-
                 // MARK: - Categories
-                ForEach(groupedAgents().sorted(by: { $0.key < $1.key }), id: \.key) { category, agents in
+                ForEach(groupedAgentsOrdered(), id: \.0) { category, agents in
                     VStack(alignment: .leading, spacing: 12) {
-                        Text(category)
+                        Text(category.rawValue)
                             .font(.headline)
                             .foregroundColor(.white)
                             .padding(.horizontal)
@@ -76,12 +63,15 @@ struct HomeView: View {
 
     // MARK: - Mock Data
     private func loadMockData() {
-        let all = mockAgents
-        self.featuredAgents = all.filter { $0.isFeatured }
-        self.allAgents = all
+        self.allAgents = mockAgents
     }
 
-    private func groupedAgents() -> [String: [Agent]] {
-        Dictionary(grouping: allAgents.filter { !$0.isFeatured }, by: { $0.category.rawValue })
+    private func groupedAgentsOrdered() -> [(AgentCategory, [Agent])] {
+        let groups = Dictionary(grouping: allAgents, by: { $0.category })
+        let order: [AgentCategory] = [.therapist, .celebrity, .personality]
+        return order.compactMap { cat in
+            guard let agents = groups[cat] else { return nil }
+            return (cat, agents)
+        }
     }
 }
