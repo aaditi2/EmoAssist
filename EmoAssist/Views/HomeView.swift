@@ -27,6 +27,7 @@ struct HomeView: View {
                     StatBox(title: "50+", subtitle: "AI Agents")
                     StatBox(title: "1M+", subtitle: "Conversations")
                 }
+                .frame(maxWidth: .infinity)
                 .padding(.horizontal)
 
                 // MARK: - Featured Agent
@@ -36,9 +37,7 @@ struct HomeView: View {
                             .font(.headline)
                             .foregroundColor(.white)
 
-                        // 👇 Frame matches other cards
                         AgentCardView(agent: featured)
-                            .frame(width: 260, height: 300)
                     }
                     .padding(.horizontal)
                 }
@@ -55,7 +54,6 @@ struct HomeView: View {
                             HStack(spacing: 16) {
                                 ForEach(agents) { agent in
                                     AgentCardView(agent: agent)
-                                        .frame(width: 260, height: 300)
                                 }
                             }
                             .padding(.horizontal)

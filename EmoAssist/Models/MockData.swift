@@ -24,5 +24,17 @@ let mockAgents: [Agent] = [
         isFeatured: false,
         callCount: 20,
         rating: 4.6
+    ),
+    Agent(
+        id: UUID(),
+        name: "Dr. Jones",
+        category: .therapist,
+        specialty: "Cognitive therapy",
+        description: "Practical advice and mindful exercises to help you grow.",
+        avatarURL: "https://images.unsplash.com/photo-...",
+        backgroundGradient: "linear-gradient(135deg, #66eeaa 0%, #764bba 100%)",
+        isFeatured: false,
+        callCount: 5,
+        rating: 4.7
     )
 ]
