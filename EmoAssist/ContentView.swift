@@ -1,24 +1,10 @@
-//
-//  ContentView.swift
-//  EmoAssist
-//
-//  Created by Aditi More on 7/6/25.
-//
-
+// Views/ContentView.swift
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            HomeView() // 
         }
-        .padding()
     }
-}
-
-#Preview {
-    ContentView()
 }
