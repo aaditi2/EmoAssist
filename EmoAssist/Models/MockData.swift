@@ -9,7 +9,6 @@ let mockAgents: [Agent] = [
         description: "A kind-hearted therapist ready to help you feel better.",
         avatarURL: "https://images.unsplash.com/photo-...",
         backgroundGradient: "linear-gradient(135deg, #66eeaa 0%, #764bba2 100%)",
-        isFeatured: true,
         callCount: 12,
         rating: 4.8
     ),
@@ -21,7 +20,6 @@ let mockAgents: [Agent] = [
         description: "Romantic, poetic, and philosophical — just like Shah Rukh Khan.",
         avatarURL: "https://images.unsplash.com/photo-...",
         backgroundGradient: "linear-gradient(135deg, #ff8c8c 0%, #ffcc70 100%)",
-        isFeatured: false,
         callCount: 20,
         rating: 4.6
     ),
@@ -33,7 +31,6 @@ let mockAgents: [Agent] = [
         description: "Practical advice and mindful exercises to help you grow.",
         avatarURL: "https://images.unsplash.com/photo-...",
         backgroundGradient: "linear-gradient(135deg, #66eeaa 0%, #764bba 100%)",
-        isFeatured: false,
         callCount: 5,
         rating: 4.7
     )
