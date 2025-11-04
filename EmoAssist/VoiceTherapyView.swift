@@ -30,6 +30,7 @@ struct VoiceTherapyView: View {
         }
     }
 
+    // MARK: - Session Status Card
     private var statusCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Session Status")
@@ -61,6 +62,7 @@ struct VoiceTherapyView: View {
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
+    // MARK: - Transcript Card
     private var liveTranscriptCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Live Transcript")
@@ -83,6 +85,7 @@ struct VoiceTherapyView: View {
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
+    // MARK: - Conversation Timeline
     private var conversationTimeline: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("Therapy Timeline")
@@ -130,8 +133,13 @@ struct VoiceTherapyView: View {
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     }
 
+    // MARK: - Microphone Button
     private var microphoneButton: some View {
-        Button(action: viewModel.toggleMicrophone) {
+        Button {
+            Task {
+                await viewModel.toggleMicrophone()
+            }
+        } label: {
             VStack(spacing: 8) {
                 Image(systemName: viewModel.sessionState == .listening ? "stop.circle.fill" : "waveform.circle.fill")
                     .font(.system(size: 64))
@@ -152,14 +160,10 @@ struct VoiceTherapyView: View {
 
     private var buttonLabel: String {
         switch viewModel.sessionState {
-        case .idle, .error:
-            return "Start Talking"
-        case .listening:
-            return "Finish Thought"
-        case .thinking:
-            return "Analyzing…"
-        case .speaking:
-            return "Stop Voice"
+        case .idle, .error:   return "Start Talking"
+        case .listening:      return "Finish Thought"
+        case .thinking:       return "Analyzing…"
+        case .speaking:       return "Stop Voice"
         }
     }
 

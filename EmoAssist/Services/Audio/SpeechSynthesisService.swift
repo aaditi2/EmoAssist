@@ -13,11 +13,10 @@ final class SpeechSynthesisService: NSObject, AVSpeechSynthesizerDelegate {
     }
 
     func speak(_ text: String) async {
-        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            return
-        }
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return }
 
         logger.log("Speaking therapist response")
+
         let utterance = AVSpeechUtterance(string: text)
         utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
         utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 0.95
@@ -41,16 +40,22 @@ final class SpeechSynthesisService: NSObject, AVSpeechSynthesizerDelegate {
         continuation = nil
     }
 
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        if let continuation {
-            continuation.resume()
+    // MARK: - AVSpeechSynthesizerDelegate
+
+    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
+                                       didFinish utterance: AVSpeechUtterance) {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            self.continuation?.resume()
             self.continuation = nil
         }
     }
 
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
-        if let continuation {
-            continuation.resume()
+    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer,
+                                       didCancel utterance: AVSpeechUtterance) {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            self.continuation?.resume()
             self.continuation = nil
         }
     }

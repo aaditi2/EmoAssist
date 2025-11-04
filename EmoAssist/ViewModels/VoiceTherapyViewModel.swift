@@ -4,24 +4,15 @@ import OSLog
 @MainActor
 final class VoiceTherapyViewModel: ObservableObject {
     enum SessionState: Equatable {
-        case idle
-        case listening
-        case thinking
-        case speaking
-        case error
+        case idle, listening, thinking, speaking, error
 
         var statusText: String {
             switch self {
-            case .idle:
-                return "Ready to listen"
-            case .listening:
-                return "Listening…"
-            case .thinking:
-                return "Processing feelings…"
-            case .speaking:
-                return "Responding"
-            case .error:
-                return "Needs attention"
+            case .idle:      return "Ready to listen"
+            case .listening: return "Listening…"
+            case .thinking:  return "Processing feelings…"
+            case .speaking:  return "Responding"
+            case .error:     return "Needs attention"
             }
         }
     }
@@ -31,36 +22,53 @@ final class VoiceTherapyViewModel: ObservableObject {
         let message: String
     }
 
+    // MARK: - Published State
     @Published var sessionState: SessionState = .idle
     @Published var transcript: String = ""
     @Published var conversation: [TherapyTurn] = []
     @Published var detectedEmotion: String? = nil
     @Published var activeError: IdentifiableError?
 
+    // MARK: - Services
     private let speechService = SpeechRecognitionService()
     private let audioSession = AudioSessionController.shared
     private let synthesisService = SpeechSynthesisService()
-    private let pipeline: TherapyPipeline
+    private var pipeline: TherapyPipeline?
     private let logger = Logger(subsystem: "com.emoassist.app", category: "voice-view-model")
-
     private var transcriptionTask: Task<Void, Never>?
 
-    init(pipeline: TherapyPipeline = GPTTherapyPipeline()) {
-        self.pipeline = pipeline
+    // MARK: - Init
+    init() {
+        Task {
+            self.pipeline = GPTTherapyPipeline()
+            logger.log("Therapy pipeline initialized")
+        }
     }
 
+    // MARK: - Setup
     func prepareSession() async {
         do {
-            try await speechService.prepare()
+            // Request both permissions first
+            try await speechService.ensureAllPermissions()
+            
+            // Then activate audio session
+            try audioSession.activateTherapyMode()
+            
+            // Prepare recognizer safely
+            try await speechService.configureRecognizer()
+            
+            logger.log("Therapy session ready")
         } catch {
             handleError(error)
         }
     }
 
-    func toggleMicrophone() {
+
+    // MARK: - Mic Control
+    func toggleMicrophone() async {
         switch sessionState {
         case .idle, .error:
-            startListening()
+            await startListening()
         case .listening:
             stopListeningAndProcess()
         case .thinking, .speaking:
@@ -77,30 +85,26 @@ final class VoiceTherapyViewModel: ObservableObject {
         transcript = ""
     }
 
-    private func startListening() {
+    // MARK: - Listening
+    private func startListening() async {
         logger.log("Starting listening phase")
         transcript = ""
 
         do {
             try audioSession.activateTherapyMode()
-            let stream = try speechService.startStreaming()
+            let stream = try await speechService.startStreaming()
             sessionState = .listening
 
             transcriptionTask?.cancel()
             transcriptionTask = Task { [weak self] in
                 guard let self else { return }
-
                 do {
                     for try await partial in stream {
                         guard !Task.isCancelled else { break }
-                        await MainActor.run {
-                            self.transcript = partial
-                        }
+                        await MainActor.run { self.transcript = partial }
                     }
                 } catch {
-                    await MainActor.run {
-                        self.handleError(error)
-                    }
+                    await MainActor.run { self.handleError(error) }
                 }
             }
         } catch {
@@ -108,6 +112,7 @@ final class VoiceTherapyViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Processing
     private func stopListeningAndProcess() {
         logger.log("Stopping listening phase")
         speechService.stop()
@@ -129,6 +134,12 @@ final class VoiceTherapyViewModel: ObservableObject {
 
     private func process(utterance: String) async {
         logger.log("Processing transcript with therapy pipeline")
+
+        guard let pipeline else {
+            handleErrorMessage("Therapy pipeline not initialized yet.")
+            return
+        }
+
         do {
             let turn = try await pipeline.respond(to: utterance, history: conversation)
             conversation.append(turn)
@@ -143,6 +154,7 @@ final class VoiceTherapyViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Playback
     private func cancelPlayback() {
         logger.log("Cancelling playback")
         synthesisService.stop()
@@ -150,10 +162,18 @@ final class VoiceTherapyViewModel: ObservableObject {
         sessionState = .idle
     }
 
+    // MARK: - Errors
     private func handleError(_ error: Error) {
         logger.error("Pipeline error: \(error.localizedDescription, privacy: .public)")
         audioSession.deactivate()
         activeError = IdentifiableError(message: error.localizedDescription)
+        sessionState = .error
+    }
+
+    private func handleErrorMessage(_ message: String) {
+        logger.error("Pipeline error: \(message, privacy: .public)")
+        audioSession.deactivate()
+        activeError = IdentifiableError(message: message)
         sessionState = .error
     }
 }

@@ -10,25 +10,32 @@ final class AudioSessionController {
 
     private init() {}
 
+    /// Activate the session in voice-chat mode (safe order + correct flags)
     func activateTherapyMode() throws {
         logger.log("Activating audio session for therapy mode")
+
         do {
+            // 1️⃣ Configure first
             try session.setCategory(
                 .playAndRecord,
                 mode: .voiceChat,
                 options: [.allowBluetooth, .allowBluetoothA2DP, .defaultToSpeaker, .duckOthers]
             )
-            try session.setActive(true, options: .notifyOthersOnDeactivation)
+
+            // 2️⃣ Activate with no options; NotifyOthersOnDeactivation is for deactivation
+            try session.setActive(true)
+            logger.log("Audio session activated successfully")
         } catch {
             logger.error("Failed to activate audio session: \(error.localizedDescription, privacy: .public)")
             throw error
         }
     }
 
+    /// Deactivate and release mic access cleanly
     func deactivate() {
         do {
-            logger.log("Deactivating audio session")
-            try session.setActive(false, options: .notifyOthersOnDeactivation)
+            try session.setActive(false, options: [.notifyOthersOnDeactivation])
+            logger.log("Audio session deactivated")
         } catch {
             logger.error("Failed to deactivate audio session: \(error.localizedDescription, privacy: .public)")
         }
