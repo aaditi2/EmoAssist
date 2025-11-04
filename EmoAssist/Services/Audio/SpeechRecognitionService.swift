@@ -40,7 +40,8 @@ final class SpeechRecognitionService: NSObject {
     private func ensureMicPermissions() async throws {
         logger.log("Requesting Microphone permission")
 
-        let permission = AVAudioApplication.shared.recordPermission
+        let session = AVAudioSession.sharedInstance()
+        let permission = session.recordPermission
         switch permission {
         case .granted:
             return
@@ -52,7 +53,7 @@ final class SpeechRecognitionService: NSObject {
             )
         case .undetermined:
             let granted = await withCheckedContinuation { cont in
-                AVAudioApplication.requestRecordPermission { cont.resume(returning: $0) }
+                session.requestRecordPermission { cont.resume(returning: $0) }
             }
             guard granted else {
                 throw NSError(
