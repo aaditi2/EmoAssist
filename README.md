@@ -1,77 +1,58 @@
-# EmoAssist
+# 🧠 EmoAssist – AI-Powered Voice Therapy Companion
 
-EmoAssist is an iOS 17 SwiftUI application that delivers a private, audio-only therapy experience. The app captures speech on-device, converts it to text with `SFSpeechRecognizer`, routes the transcript through a Together.ai powered therapy pipeline, and speaks an empathetic response back to the user. The entire conversation lifecycle is orchestrated with Swift Concurrency and instrumented with `OSLog` so that every stage—listening, thinking, and speaking—remains observable.
+**EmoAssist** is an AI-driven voice therapy app built with **SwiftUI**, **AVFoundation**, and **Speech Framework**, offering real-time speech recognition, emotion detection, and soothing AI responses through natural voice synthesis.  
 
-## Features
+---
 
-- 🎙️ **Hands-free voice sessions** – `VoiceTherapyView` and `VoiceTherapyViewModel` coordinate microphone access, transcription streaming, and playback state transitions.
-- 🧠 **Therapy pipeline with Together.ai** – `GPTTherapyPipeline` composes recent `TherapyTurn` history and calls `TogetherTherapyService` for emotion-aware support.
-- 🔊 **Robust audio stack** – `SpeechRecognitionService`, `AudioSessionController`, and `SpeechSynthesisService` manage permissions, audio routing, and natural speech output.
-- 📓 **Conversation timeline** – Each exchange is rendered in a secure, on-device timeline that clears between sessions for privacy.
-- 🌌 **Explorable agent catalog (prototype)** – SwiftUI views such as `HomeView`, `AgentCardView`, and `AgentDetailView` showcase mock conversational agents for future expansion.
+## 🌟 Features
 
-## Project Structure
+- 🎙️ **Real-Time Speech Recognition** – Seamless live transcription using Apple’s Speech framework.  
+- 💬 **Therapeutic AI Responses** – Integrated **Together.ai** backend that provides calming, emotion-aware replies.  
+- 🧘 **Emotion Detection** – Detects tone (calm, anxious, reflective, etc.) using contextual AI analysis.  
+- 🔊 **Voice Synthesis** – Responds with gentle, natural-sounding speech using `AVSpeechSynthesizer`.  
+- 🪄 **Privacy-Focused Design** – All speech and transcripts are processed locally and cleared automatically.  
+- 🌈 **Apple-Style Interface** – Minimal, glassmorphic SwiftUI design inspired by Apple’s health and mindfulness apps.  
 
-```
-EmoAssist/
-├─ EmoAssist.xcodeproj           # Xcode project targeting iOS 17+
-├─ EmoAssistApp.swift            # SwiftUI entry point
-├─ ContentView.swift             # Hosts the active feature screen
-├─ VoiceTherapyView.swift        # Primary user experience
-├─ ViewModels/
-│  └─ VoiceTherapyViewModel.swift
-├─ Services/
-│  ├─ Audio/
-│  │  ├─ AudioSessionController.swift
-│  │  ├─ SpeechRecognitionService.swift
-│  │  └─ SpeechSynthesisService.swift
-│  ├─ Therapy/
-│  │  └─ TherapyPipeline.swift
-│  └─ ApiService.swift           # Together.ai integration
-├─ Models/                       # Agent & therapy domain models
-├─ Views/                        # Additional SwiftUI screens (prototype catalog)
-└─ Extensions/
-   └─ Color+Hex.swift            # Utility initialiser for hex colours
-```
+---
 
-## Getting Started
+## 🧩 Tech Stack
 
-1. **Requirements**
-   - Xcode 15 or newer
-   - iOS 17 simulator or device with working microphone
-   - Together.ai API key
-2. **Clone & open** – `git clone` the repo and open `EmoAssist.xcodeproj` in Xcode.
-3. **Configure secrets** – Replace the placeholder token in `Secrets.swift` with your Together.ai API key. Avoid committing real keys; consider moving this value into an `.xcconfig` or environment-specific build setting for production use.
-4. **Select a run destination** – Choose an iOS 17+ simulator (or a physical device with microphone access) and build (`⌘B`).
-5. **Grant permissions on first launch** – The app will request Speech Recognition and Microphone permissions via `SpeechRecognitionService.ensureAllPermissions()`.
+| Layer | Technologies |
+|-------|---------------|
+| **UI / UX** | SwiftUI, SF Symbols, UIKit gradient bridge |
+| **Audio Processing** | AVFoundation, `AVAudioSession` |
+| **Speech Recognition** | `SFSpeechRecognizer`, Async Streams |
+| **Voice Generation** | `AVSpeechSynthesizer`, async-safe handling |
+| **Backend (LLM)** | Together.ai REST API |
+| **Architecture** | MVVM, `@MainActor`, `async/await` concurrency |
+| **Logging** | OSLog with structured subsystem categories |
 
-## Using EmoAssist
+---
 
-1. Tap the microphone button to activate listening. The status card will transition to **Listening…**, and the transcript area will stream partial text using an `AsyncThrowingStream`.
-2. Tap the button again to finish speaking. The view model sends the transcript to `GPTTherapyPipeline`, which aggregates recent conversation context and calls Together.ai.
-3. EmoAssist speaks the therapist’s response with `AVSpeechSynthesizer` while updating the detected emotion badge.
-4. Each `TherapyTurn` is appended to the timeline. Stopping playback or encountering an error automatically deactivates the `AVAudioSession` to release the microphone.
+## 🧠 Core Components
 
-## Architecture Highlights
+| File | Purpose |
+|------|----------|
+| `VoiceTherapyView.swift` | Main interface for session and conversation display |
+| `VoiceTherapyViewModel.swift` | Manages state, emotion updates, and LLM responses |
+| `SpeechRecognitionService.swift` | Streams and transcribes voice input in real time |
+| `SpeechSynthesisService.swift` | Plays therapist responses via natural voice synthesis |
+| `AudioSessionController.swift` | Configures and manages audio session safely |
+| `GPTTherapyPipeline.swift` | Handles LLM query + response flow |
+| `TherapyTurn.swift` | Model representing each user ↔ therapist dialogue turn |
 
-- **Swift Concurrency throughout** – The voice session life cycle uses async/await for permission handling, audio streaming, API calls, and speech synthesis.
-- **Error handling & recovery** – All services log to `OSLog` and surface user-facing errors through `VoiceTherapyViewModel.IdentifiableError`, allowing the UI to present alerts and reset safely.
-- **Dependency seams for testing** – `TherapyPipeline` is protocol-oriented, enabling alternative implementations (e.g., offline mock therapy) to be injected for previews or tests.
-- **Privacy-first design** – Only text transcripts leave the device; audio buffers stay local. The timeline is cleared when the session resets, and no persistence layer is enabled by default.
+---
 
-## Development Notes
+## 🛠️ Setup Instructions
 
-- **Mock catalog** – `mockAgents` in `Models/MockData.swift` powers the exploratory `HomeView` and related UI components. These views are not yet wired into `ContentView` but provide a foundation for future navigation or onboarding experiences.
-- **Secrets management** – The repository currently stores the API key constant for convenience. Replace it with a secure mechanism (e.g., environment-specific `.xcconfig` file or CI secrets) before distributing the app.
-- **Logging** – Categories such as `speech-service`, `therapy-pipeline`, and `voice-view-model` make it easy to filter logs in the Console app during debugging.
+1. Clone the repository  
+   ```bash
+   git clone https://github.com/yourusername/EmoAssist.git
+   cd EmoAssist
+---
 
-## Roadmap Ideas
+## 📸 Screenshots
+<img src="https://github.com/user-attachments/assets/68a6b705-4f3e-43ba-aa0d-1949020ed3d6" width="230"/>
+<img src="https://github.com/user-attachments/assets/28bcb7a2-149c-4bc0-9123-d7713a08c1b4" width="230"/>
+<img src="https://github.com/user-attachments/assets/22d462e2-6f78-47c7-85c2-f229a3ebcfed" width="230"/>
 
-- Integrate the agent catalog into the main navigation and allow users to pick a persona before starting therapy.
-- Add persistence for conversation history with user consent, leveraging Core Data or CloudKit.
-- Provide unit tests around `VoiceTherapyViewModel` and introduce dependency injection for the speech services.
-- Offer offline fallback responses when Together.ai is unavailable.
-
-## License
-
-This project is provided as-is for demonstration purposes. Consult the repository owner for licensing details before using EmoAssist in production.
