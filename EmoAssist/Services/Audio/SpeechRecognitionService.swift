@@ -118,9 +118,9 @@ final class SpeechRecognitionService: NSObject {
             self?.request?.append(buffer)
         }
 
-        engine.prepare()
-        try engine.start()  // Safe because we’re already on @MainActor
+        try await Task.sleep(for: .milliseconds(150))
 
+        try engine.start()
         logger.log("Audio engine started")
 
         return AsyncThrowingStream { continuation in
