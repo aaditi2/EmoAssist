@@ -43,16 +43,15 @@
 
 ---
 
-## 🛠️ Setup Instructions
-
-1. Clone the repository  
-   ```bash
-   git clone https://github.com/yourusername/EmoAssist.git
-   cd EmoAssist
----
-
 ## 📸 Screenshots
 <img src="https://github.com/user-attachments/assets/68a6b705-4f3e-43ba-aa0d-1949020ed3d6" width="230"/>
 <img src="https://github.com/user-attachments/assets/28bcb7a2-149c-4bc0-9123-d7713a08c1b4" width="230"/>
 <img src="https://github.com/user-attachments/assets/22d462e2-6f78-47c7-85c2-f229a3ebcfed" width="230"/>
 
+---
+## 🛠️ Setup Instructions
+
+ Clone the repository  
+   ```bash
+   git clone https://github.com/aaditi2/EmoAssist.git
+   cd EmoAssist
