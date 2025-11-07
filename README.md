@@ -29,20 +29,6 @@
 
 ---
 
-## 🧠 Core Components
-
-| File | Purpose |
-|------|----------|
-| `VoiceTherapyView.swift` | Main interface for session and conversation display |
-| `VoiceTherapyViewModel.swift` | Manages state, emotion updates, and LLM responses |
-| `SpeechRecognitionService.swift` | Streams and transcribes voice input in real time |
-| `SpeechSynthesisService.swift` | Plays therapist responses via natural voice synthesis |
-| `AudioSessionController.swift` | Configures and manages audio session safely |
-| `GPTTherapyPipeline.swift` | Handles LLM query + response flow |
-| `TherapyTurn.swift` | Model representing each user ↔ therapist dialogue turn |
-
----
-
 ## 📸 Screenshots
 <img src="https://github.com/user-attachments/assets/68a6b705-4f3e-43ba-aa0d-1949020ed3d6" width="230"/>
 <img src="https://github.com/user-attachments/assets/28bcb7a2-149c-4bc0-9123-d7713a08c1b4" width="230"/>
